@@ -1,0 +1,75 @@
+-- [[ CONFIGURATION ]] --
+local player = game:GetService("Players").LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local rootPart = character:WaitForChild("HumanoidRootPart")
+
+-- [[ UI CREATION ]] --
+local ScreenGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local Title = Instance.new("TextLabel")
+local FarmBtn = Instance.new("TextButton")
+local StatusLabel = Instance.new("TextLabel")
+
+ScreenGui.Parent = game:GetService("CoreGui")
+ScreenGui.Name = "MoneyFarmUI"
+
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+MainFrame.Position = UDim2.new(0.5, -100, 0.5, -75)
+MainFrame.Size = UDim2.new(0, 200, 0, 150)
+MainFrame.Active = true
+MainFrame.Draggable = true -- สามารถลาก UI ไปมาได้
+
+Title.Parent = MainFrame
+Title.Size = UDim2.new(1, 0, 0, 30)
+Title.Text = "ร้างตาย Money Farm"
+Title.TextColor3 = Color3.fromRGB(255, 0, 0)
+Title.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+
+FarmBtn.Parent = MainFrame
+FarmBtn.Position = UDim2.new(0.1, 0, 0.4, 0)
+FarmBtn.Size = UDim2.new(0.8, 0, 0.3, 0)
+FarmBtn.Text = "Auto Farm (แดง)"
+FarmBtn.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+FarmBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+StatusLabel.Parent = MainFrame
+StatusLabel.Position = UDim2.new(0, 0, 0.8, 0)
+StatusLabel.Size = UDim2.new(1, 0, 0, 20)
+StatusLabel.Text = "Status: Idle"
+StatusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+-- [[ FARMING LOGIC ]] --
+local farming = false
+
+FarmBtn.MouseButton1Click:Connect(function()
+    farming = not farming
+    if farming then
+        FarmBtn.Text = "Stop Farming"
+        FarmBtn.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
+        StatusLabel.Text = "Status: Searching Money..."
+    else
+        FarmBtn.Text = "Auto Farm (แดง)"
+        FarmBtn.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+        StatusLabel.Text = "Status: Stopped"
+    end
+end)
+
+task.spawn(function()
+    while task.wait(0.5) do
+        if farming then
+            -- ค้นหาเงินแดงใน Workspace (อ้างอิงจากชื่อวัตถุในแมพร้างตาย)
+            for _, v in pairs(game.Workspace:GetDescendants()) do
+                if v.Name == "RedMoney" or v.Name == "Money" then -- แก้ชื่อตาม Object จริงในแมพ
+                    if v:IsA("Part") or v:IsA("MeshPart") then
+                        StatusLabel.Text = "Status: Teleporting..."
+                        rootPart.CFrame = v.CFrame * CFrame.new(0, 2, 0)
+                        task.wait(0.2) -- รอให้เก็บเงินก่อนไปตัวถัดไป
+                    end
+                end
+                if not farming then break end
+            end
+        end
+    end
+end)
